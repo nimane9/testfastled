@@ -1,0 +1,166 @@
+#include <FastLED.h>
+#include <OneButton.h>
+
+#define NUM_LEDS  100
+#define LED_PIN   2
+#define BTN1_PIN   3    
+#define BTN2_PIN   4   
+
+CRGB leds[NUM_LEDS];
+
+uint8_t patternCounter = 0;
+uint8_t colorIndex[NUM_LEDS];
+uint8_t paletteCounter = 0;
+
+DEFINE_GRADIENT_PALETTE( greenblue_gp ) { 
+    0,    0,  194,  255,     //light blue
+   46,    3,    0,  246,     //dark blue
+  176,   55,  222,   70,     //bright green
+  255,    0,  194,  255      //light blue
+};
+
+DEFINE_GRADIENT_PALETTE( orangepink_gp ) { 
+    0,  255,  100,    0,     //orange
+   90,  255,    0,  255,     //magenta
+  150,  255,  100,    0,     //orange
+  255,  255,  100,    0      //orange
+};
+
+DEFINE_GRADIENT_PALETTE( browngreen_gp ) { 
+    0,    6,  255,    0,     //green
+   71,    0,  255,  153,     //bluegreen
+  122,  200,  200,  200,     //gray
+  181,  110,   61,    6,     //brown
+  255,    6,  255,    0      //green
+};
+
+CRGBPalette16 currentPalette(greenblue_gp);
+CRGBPalette16 targetPalette(orangepink_gp);
+
+// Push button connected between pin 7 and GND (no resistor required)
+OneButton btn1 = OneButton(BTN1_PIN, true, true);
+OneButton btn2 = OneButton(BTN2_PIN, true, true);
+
+
+void setup() {
+  FastLED.addLeds<WS2811, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(255);
+  Serial.begin(57600);
+
+  btn1.attachClick(nextPattern);
+  btn2.attachClick(nextPalette);
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+  colorIndex[i] = random8();
+  }
+}
+
+void loop() {
+  
+  switch (patternCounter) {
+    case 0:
+      off();
+      break;
+    case 1:
+      solid();
+      break;
+    case 2:
+      rainbowBeat();
+      break;
+    case 3:
+      redWhiteBlue();
+      break;
+  }
+  
+  FastLED.show();
+  btn1.tick();
+  btn2.tick();
+}
+
+void nextPattern() {
+  patternCounter = (patternCounter + 1) % 3;           // Change the number after the % to the number of patterns you have
+}
+
+//------- Put your patterns below -------//
+
+void off() {
+  
+  fadeToBlackBy(leds, NUM_LEDS, 10);
+}
+
+void solid() {
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  switch (paletteCounter) {
+    case 0:
+      targetPalette = orangepink_gp;
+      break;
+    case 1:
+      targetPalette = browngreen_gp;
+      break;
+     case 2:
+      targetPalette = greenblue_gp;
+      break;
+  }
+
+void rainbowBeat() {
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  switch (whichPalette) {
+    case 0:
+      targetPalette = orangepink_gp;
+      break;
+    case 1:
+      targetPalette = browngreen_gp;
+      break;
+     case 2:
+      targetPalette = greenblue_gp;
+      break;
+  }
+  
+  uint16_t beatA = beatsin16(30, 0, 255);
+  uint16_t beatB = beatsin16(20, 0, 255);
+  fill_rainbow(leds, NUM_LEDS, (beatA+beatB)/2, 8);
+}
+
+
+void redWhiteBlue() {
+  
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  switch (whichPalette) {
+    case 0:
+      targetPalette = orangepink_gp;
+      break;
+    case 1:
+      targetPalette = browngreen_gp;
+      break;
+     case 2:
+      targetPalette = greenblue_gp;
+      break;
+  }
+
+  uint16_t sinBeat   = beatsin16(30, 0, NUM_LEDS - 1, 0, 0);
+  uint16_t sinBeat2  = beatsin16(30, 0, NUM_LEDS - 1, 0, 21845);
+  uint16_t sinBeat3  = beatsin16(30, 0, NUM_LEDS - 1, 0, 43690);
+
+  leds[sinBeat]   = CRGB::Blue;
+  leds[sinBeat2]  = CRGB::Red;
+  leds[sinBeat3]  = CRGB::White;
+  
+  fadeToBlackBy(leds, NUM_LEDS, 10);
+}
