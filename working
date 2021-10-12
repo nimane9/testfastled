@@ -1,0 +1,164 @@
+#include <FastLED.h>
+#include <OneButton.h>
+
+#define NUM_LEDS  100
+#define LED_PIN   2
+#define BTN1_PIN   3  
+#define BTN2_PIN   4
+
+CRGB leds[NUM_LEDS];
+
+uint8_t colorIndex[NUM_LEDS];
+uint8_t whichPalette = 0;
+uint8_t whichPattern = 0;
+
+DEFINE_GRADIENT_PALETTE( sky_gp ) { 
+    0,  210,   80,    3,
+   38,  255,  215,  106,
+  165,   64,  114,  176,
+  255,    5,   12,   38     
+};
+
+DEFINE_GRADIENT_PALETTE( greenblue_gp ) { 
+    0,    0,  194, 255,     
+   46,    3,    0, 246,     
+  176,   55,  222,  70,    
+  255,    0,  194, 255      
+};
+
+DEFINE_GRADIENT_PALETTE( pinksky_gp ) { 
+    0,  206,   78,   44,
+   68,  167,   57,  155,
+  165,   12,    1,   37,
+  255,    1,    1,    9   
+};
+
+DEFINE_GRADIENT_PALETTE( patriotic_gp ) { 
+    0,  255,    0,    0,     
+   76,    9,    9,  121,     
+  122,   65,  214,  195,     
+  255,  255,    0,    0      
+};
+
+DEFINE_GRADIENT_PALETTE( lucy_gp ) {
+    0,  175,    1,   44,
+   51,  194,   14,   35,
+  102,  213,   40,   27,
+  153,  234,   80,   21,
+  255,  255,  136,   15
+};
+
+CRGBPalette16 currentPalette(greenblue_gp);
+CRGBPalette16 targetPalette(pinksky_gp);
+
+OneButton btn1 = OneButton(BTN1_PIN, true, true);
+OneButton btn2 = OneButton(BTN2_PIN, true, true);
+
+void setup() {
+  FastLED.addLeds<WS2811, LED_PIN, RGB>(leds, NUM_LEDS);
+  FastLED.setBrightness(255);
+
+  Serial.begin(57600);
+
+  btn1.attachClick(nextPalette);
+  btn2.attachClick(nextPattern);
+
+  //Fill the colorIndex array with random numbers
+  for (int i = 0; i < NUM_LEDS; i++) {
+    colorIndex[i] = random8();
+  }
+}
+
+void nextPalette() {
+  whichPalette = (whichPalette + 1) % 5;           // Change the number after the % to the number of patterns you have
+}
+
+void nextPattern() {
+  whichPattern = (whichPattern + 1) % 4;           // Change the number after the % to the number of patterns you have
+}
+
+void loop() {
+
+    switch (whichPattern) {
+    case 0:
+      off();
+      break;
+    case 1:
+      solid();
+      break;
+    case 2:
+      twinkle();
+      break;
+    case 3:
+      blinky();
+      break;
+  }
+  
+  switch (whichPalette) {
+    case 0:
+      targetPalette = sky_gp;
+      break;
+    case 1:
+      targetPalette = pinksky_gp;
+      break;
+    case 2:
+      targetPalette = patriotic_gp;
+      break;
+    case 3:
+      targetPalette = greenblue_gp;
+      break;
+    case 4:
+      targetPalette = lucy_gp;
+      break;
+  }
+
+  FastLED.show();
+  btn1.tick();
+  btn2.tick();
+  
+}
+
+void off() {
+
+fadeToBlackBy(leds, NUM_LEDS, 10);
+  
+}
+
+void solid() {
+
+ for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+   nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+}
+  
+void twinkle() {
+
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+   nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i < NUM_LEDS; i++) {
+      colorIndex[i]++;
+    }
+  }
+}
+
+void blinky() { 
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  uint16_t sinBeat   = beatsin16(30, 0, NUM_LEDS - 1, 0, 0);
+  uint16_t sinBeat2  = beatsin16(30, 0, NUM_LEDS - 1, 0, 21845);
+  uint16_t sinBeat3  = beatsin16(30, 0, NUM_LEDS - 1, 0, 43690);
+
+  leds[sinBeat]   = ColorFromPalette(currentPalette, random(1, 56));
+  leds[sinBeat2]  = ColorFromPalette(currentPalette, random(57, 113));
+  leds[sinBeat3]  = ColorFromPalette(currentPalette, random(114, 169));
+  
+  fadeToBlackBy(leds, NUM_LEDS, 10); 
+  }
