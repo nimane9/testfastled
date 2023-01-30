@@ -1,0 +1,55 @@
+● KlipperScreen.service - KlipperScreen
+     Loaded: loaded (/etc/systemd/system/KlipperScreen.service; enabled; vendor>
+     Active: active (running) since Mon 2023-01-30 12:57:44 PST; 3s ago
+   Main PID: 2164 (KlipperScreen-s)
+      Tasks: 3 (limit: 719)
+        CPU: 2.761s
+     CGroup: /system.slice/KlipperScreen.service
+             ├─2164 /bin/bash /home/pi/KlipperScreen/scripts/KlipperScreen-star>
+             └─2167 /usr/bin/xinit /home/pi/.KlipperScreen-env/bin/python /home>
+
+Jan 30 12:57:44 raspberrypi KlipperScreen-start.sh[2168]: (==) Using system con>
+Jan 30 12:57:45 raspberrypi KlipperScreen-start.sh[2168]: (II) modeset(0): Init>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]: Traceback (most recen>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]:   File "/home/pi/Klip>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]:     gi.require_versio>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]: AttributeError: modul>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]: /usr/bin/xinit: conne>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]:
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]: waiting for X server >
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2168]: (II) Server terminate>
+Jan 30 12:57:48 raspberrypi systemd[1]: KlipperScreen.service: Succeeded.
+Jan 30 12:57:48 raspberrypi systemd[1]: KlipperScreen.service: Consumed 2.766s >
+Jan 30 12:57:49 raspberrypi systemd[1]: KlipperScreen.service: Scheduled restar>
+lines 1-23...skipping...
+● KlipperScreen.service - KlipperScreen
+     Loaded: loaded (/etc/systemd/system/KlipperScreen.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2023-01-30 12:57:44 PST; 3s ago
+   Main PID: 2164 (KlipperScreen-s)
+      Tasks: 3 (limit: 719)
+        CPU: 2.761s
+     CGroup: /system.slice/KlipperScreen.service
+             ├─2164 /bin/bash /home/pi/KlipperScreen/scripts/KlipperScreen-start.sh
+             └─2167 /usr/bin/xinit /home/pi/.KlipperScreen-env/bin/python /home/pi/KlipperScreen/screen.py
+
+Jan 30 12:57:44 raspberrypi KlipperScreen-start.sh[2168]: (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+Jan 30 12:57:45 raspberrypi KlipperScreen-start.sh[2168]: (II) modeset(0): Initializing kms color map for depth 24, 8 bpc.
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]: Traceback (most recent call last):
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]:   File "/home/pi/KlipperScreen/screen.py", line 14, in <module>
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]:     gi.require_version("Gtk", "3.0")
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2222]: AttributeError: module 'gi' has no attribute 'require_version'
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]: /usr/bin/xinit: connection to X server lost
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]:
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2167]: waiting for X server to shut down
+Jan 30 12:57:47 raspberrypi KlipperScreen-start.sh[2168]: (II) Server terminated successfully (0). Closing log file.
+Jan 30 12:57:48 raspberrypi systemd[1]: KlipperScreen.service: Succeeded.
+Jan 30 12:57:48 raspberrypi systemd[1]: KlipperScreen.service: Consumed 2.766s CPU time.
+Jan 30 12:57:49 raspberrypi systemd[1]: KlipperScreen.service: Scheduled restart job, restart counter is at 10.
+Jan 30 12:57:49 raspberrypi systemd[1]: Stopped KlipperScreen.
+Jan 30 12:57:49 raspberrypi systemd[1]: KlipperScreen.service: Consumed 2.766s CPU time.
+Jan 30 12:57:49 raspberrypi systemd[1]: Started KlipperScreen.
+~
+~
+~
+~
+~
